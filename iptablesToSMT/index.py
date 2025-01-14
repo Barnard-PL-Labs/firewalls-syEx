@@ -150,8 +150,29 @@ def parse_smt2_files(klee_output_dir):
     # Find all .smt2 files in the KLEE output directory
     for file in os.listdir(klee_output_dir):
         if file.endswith('.smt2'):
+            test_num = file.split('test')[1].split('.')[0]  # Extract test number
+            ktest_file = f"test{test_num}.ktest"
+            
+            # Read the SMT formula
             with open(os.path.join(klee_output_dir, file), 'r') as f:
-                smt_formulas.append(f.read())
+                content = f.read()
+            
+            # Use ktest-tool to read the test case result
+            try:
+                ktest_output = subprocess.check_output(
+                    ["ktest-tool", os.path.join(klee_output_dir, ktest_file)],
+                    stderr=subprocess.STDOUT
+                ).decode('utf-8')
+                
+                # Look for 'result' in the ktest output
+                path_type = "DROP"  # Default
+                if "result = 1" in ktest_output:
+                    path_type = "ACCEPT"
+                
+                smt_formulas.append((path_type, content))
+            except subprocess.CalledProcessError:
+                print(f"Warning: Could not read {ktest_file}")
+                smt_formulas.append(("UNKNOWN", content))
     
     return smt_formulas
 
