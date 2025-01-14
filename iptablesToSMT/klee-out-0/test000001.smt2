@@ -1,0 +1,8 @@
+(set-logic QF_AUFBV )
+(declare-fun dst_port () (Array (_ BitVec 32) (_ BitVec 8) ) )
+(declare-fun proto () (Array (_ BitVec 32) (_ BitVec 8) ) )
+(declare-fun src_ip () (Array (_ BitVec 32) (_ BitVec 8) ) )
+(declare-fun src_port () (Array (_ BitVec 32) (_ BitVec 8) ) )
+(assert (and  (and  (and  (=  (_ bv6 32) (concat  (select  proto (_ bv3 32) ) (concat  (select  proto (_ bv2 32) ) (concat  (select  proto (_ bv1 32) ) (select  proto (_ bv0 32) ) ) ) ) ) (=  (_ bv3232235876 32) (concat  (select  src_ip (_ bv3 32) ) (concat  (select  src_ip (_ bv2 32) ) (concat  (select  src_ip (_ bv1 32) ) (select  src_ip (_ bv0 32) ) ) ) ) ) ) (=  (_ bv1024 16) (concat  (select  src_port (_ bv1 32) ) (select  src_port (_ bv0 32) ) ) ) ) (=  (_ bv80 16) (concat  (select  dst_port (_ bv1 32) ) (select  dst_port (_ bv0 32) ) ) ) ) )
+(check-sat)
+(exit)

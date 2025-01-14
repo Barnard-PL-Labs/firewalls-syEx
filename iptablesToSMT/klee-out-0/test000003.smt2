@@ -1,0 +1,5 @@
+(set-logic QF_AUFBV )
+(declare-fun proto () (Array (_ BitVec 32) (_ BitVec 8) ) )
+(assert (let ( (?B1 (concat  (select  proto (_ bv3 32) ) (concat  (select  proto (_ bv2 32) ) (concat  (select  proto (_ bv1 32) ) (select  proto (_ bv0 32) ) ) ) ) ) ) (and  (=  false (=  (_ bv6 32) ?B1 ) ) (=  false (=  (_ bv17 32) ?B1 ) ) ) ) )
+(check-sat)
+(exit)
