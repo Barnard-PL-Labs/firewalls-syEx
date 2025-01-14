@@ -1,6 +1,0 @@
-(set-logic QF_AUFBV )
-(declare-fun dst_port () (Array (_ BitVec 32) (_ BitVec 8) ) )
-(declare-fun proto () (Array (_ BitVec 32) (_ BitVec 8) ) )
-(assert (let ( (?B1 (concat  (select  dst_port (_ bv1 32) ) (select  dst_port (_ bv0 32) ) ) ) ) (and  (and  (and  (and  (and  (and  (=  (_ bv6 32) (concat  (select  proto (_ bv3 32) ) (concat  (select  proto (_ bv2 32) ) (concat  (select  proto (_ bv1 32) ) (select  proto (_ bv0 32) ) ) ) ) ) (=  false (=  (_ bv22 16) ?B1 ) ) ) (=  false (=  (_ bv80 16) ?B1 ) ) ) (=  false (=  (_ bv443 16) ?B1 ) ) ) (=  false (=  (_ bv30033 16) ?B1 ) ) ) (=  false (=  (_ bv9987 16) ?B1 ) ) ) (=  false (=  (_ bv13001 16) ?B1 ) ) ) ) )
-(check-sat)
-(exit)
