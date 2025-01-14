@@ -23,6 +23,14 @@ typedef struct {
 ipt_rule_t rules[MAX_RULES];
 int rules_count = 0;
 
+void init_rules() {
+    // Initialize rules
+    rules[0] = (ipt_rule_t){ 17, 3232235776, 167772161, 53, 53, 1 };
+    rules[1] = (ipt_rule_t){ 6, 3232235876, 0, 1024, 80, 1 };
+    rules[2] = (ipt_rule_t){ -1, 0, 0, 0, 0, 0 };
+    rules_count = 3;
+}
+
 int check_packet(uint32_t src_ip, uint32_t dst_ip, uint16_t src_port, uint16_t dst_port, int proto) {
     for (int i = 0; i < rules_count; i++) {
         ipt_rule_t r = rules[i];
@@ -36,6 +44,7 @@ int check_packet(uint32_t src_ip, uint32_t dst_ip, uint16_t src_port, uint16_t d
     return ACTION_DROP; // Default policy
 }
 
+#ifndef CONCRETE_TEST
 int main() {
     uint32_t src_ip, dst_ip;
     uint16_t src_port, dst_port;
@@ -47,6 +56,7 @@ int main() {
     klee_make_symbolic(&src_port, sizeof(src_port), "src_port");
     klee_make_symbolic(&dst_port, sizeof(dst_port), "dst_port");
     klee_make_symbolic(&proto, sizeof(proto), "proto");
+    klee_assume(proto == 6 || proto == 17 || proto == 1);
 #else
     // Default test values when not using KLEE
     src_ip = 3232235876;  // 192.168.1.100
@@ -56,18 +66,18 @@ int main() {
     proto = 6;  // TCP
 #endif
 
-    // Initialize rules
-    rules[0] = (ipt_rule_t){ 6, 3232235876, 0, 1024, 80, 1 };
-    rules[1] = (ipt_rule_t){ 17, 3232235776, 167772161, 53, 53, 1 };
-    rules[2] = (ipt_rule_t){ -1, 0, 0, 0, 0, 0 };
-    rules_count = 3;
-
+    init_rules();
     int result = check_packet(src_ip, dst_ip, src_port, dst_port, proto);
+    
 #ifdef USE_KLEE
-    if(result == ACTION_ACCEPT)
+    if (result == ACTION_ACCEPT) {
+        klee_warning("ACCEPT");
         klee_assert(result == ACTION_ACCEPT);
-    else
+    } else {
+        klee_warning("DROP");
         klee_assert(result == ACTION_DROP);
+    }
 #endif
-    return 0;
+    return result;
 }
+#endif

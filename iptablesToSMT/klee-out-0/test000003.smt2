@@ -1,5 +1,7 @@
 (set-logic QF_AUFBV )
 (declare-fun proto () (Array (_ BitVec 32) (_ BitVec 8) ) )
-(assert (let ( (?B1 (concat  (select  proto (_ bv3 32) ) (concat  (select  proto (_ bv2 32) ) (concat  (select  proto (_ bv1 32) ) (select  proto (_ bv0 32) ) ) ) ) ) ) (and  (=  false (=  (_ bv6 32) ?B1 ) ) (=  false (=  (_ bv17 32) ?B1 ) ) ) ) )
+(declare-fun src_ip () (Array (_ BitVec 32) (_ BitVec 8) ) )
+(declare-fun src_port () (Array (_ BitVec 32) (_ BitVec 8) ) )
+(assert (and  (and  (=  (_ bv6 32) (concat  (select  proto (_ bv3 32) ) (concat  (select  proto (_ bv2 32) ) (concat  (select  proto (_ bv1 32) ) (select  proto (_ bv0 32) ) ) ) ) ) (=  (_ bv3232235876 32) (concat  (select  src_ip (_ bv3 32) ) (concat  (select  src_ip (_ bv2 32) ) (concat  (select  src_ip (_ bv1 32) ) (select  src_ip (_ bv0 32) ) ) ) ) ) ) (=  false (=  (_ bv1024 16) (concat  (select  src_port (_ bv1 32) ) (select  src_port (_ bv0 32) ) ) ) ) ) )
 (check-sat)
 (exit)

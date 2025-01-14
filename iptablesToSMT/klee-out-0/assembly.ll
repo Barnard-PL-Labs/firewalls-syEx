@@ -12,10 +12,62 @@ target triple = "x86_64-unknown-linux-gnu"
 @.str.2 = private unnamed_addr constant [9 x i8] c"src_port\00", align 1
 @.str.3 = private unnamed_addr constant [9 x i8] c"dst_port\00", align 1
 @.str.4 = private unnamed_addr constant [6 x i8] c"proto\00", align 1
-@.str.5 = private unnamed_addr constant [24 x i8] c"result == ACTION_ACCEPT\00", align 1
-@.str.6 = private unnamed_addr constant [13 x i8] c"test_rules.c\00", align 1
+@.str.5 = private unnamed_addr constant [7 x i8] c"ACCEPT\00", align 1
+@.str.6 = private unnamed_addr constant [24 x i8] c"result == ACTION_ACCEPT\00", align 1
+@.str.7 = private unnamed_addr constant [13 x i8] c"test_rules.c\00", align 1
 @__PRETTY_FUNCTION__.main = private unnamed_addr constant [11 x i8] c"int main()\00", align 1
-@.str.7 = private unnamed_addr constant [22 x i8] c"result == ACTION_DROP\00", align 1
+@.str.8 = private unnamed_addr constant [5 x i8] c"DROP\00", align 1
+@.str.9 = private unnamed_addr constant [22 x i8] c"result == ACTION_DROP\00", align 1
+
+; Function Attrs: noinline nounwind optnone uwtable
+define dso_local void @init_rules() #0 {
+entry:
+  %.compoundliteral = alloca %struct.ipt_rule_t, align 4
+  %.compoundliteral1 = alloca %struct.ipt_rule_t, align 4
+  %.compoundliteral8 = alloca %struct.ipt_rule_t, align 4
+  %proto = getelementptr inbounds %struct.ipt_rule_t, %struct.ipt_rule_t* %.compoundliteral, i32 0, i32 0
+  store i32 17, i32* %proto, align 4
+  %src_ip = getelementptr inbounds %struct.ipt_rule_t, %struct.ipt_rule_t* %.compoundliteral, i32 0, i32 1
+  store i32 -1062731520, i32* %src_ip, align 4
+  %dst_ip = getelementptr inbounds %struct.ipt_rule_t, %struct.ipt_rule_t* %.compoundliteral, i32 0, i32 2
+  store i32 167772161, i32* %dst_ip, align 4
+  %src_port = getelementptr inbounds %struct.ipt_rule_t, %struct.ipt_rule_t* %.compoundliteral, i32 0, i32 3
+  store i16 53, i16* %src_port, align 4
+  %dst_port = getelementptr inbounds %struct.ipt_rule_t, %struct.ipt_rule_t* %.compoundliteral, i32 0, i32 4
+  store i16 53, i16* %dst_port, align 2
+  %action = getelementptr inbounds %struct.ipt_rule_t, %struct.ipt_rule_t* %.compoundliteral, i32 0, i32 5
+  store i32 1, i32* %action, align 4
+  %0 = bitcast %struct.ipt_rule_t* %.compoundliteral to i8*
+  %1 = call i8* @memcpy(i8* bitcast ([128 x %struct.ipt_rule_t]* @rules to i8*), i8* %0, i64 20)
+  %proto2 = getelementptr inbounds %struct.ipt_rule_t, %struct.ipt_rule_t* %.compoundliteral1, i32 0, i32 0
+  store i32 6, i32* %proto2, align 4
+  %src_ip3 = getelementptr inbounds %struct.ipt_rule_t, %struct.ipt_rule_t* %.compoundliteral1, i32 0, i32 1
+  store i32 -1062731420, i32* %src_ip3, align 4
+  %dst_ip4 = getelementptr inbounds %struct.ipt_rule_t, %struct.ipt_rule_t* %.compoundliteral1, i32 0, i32 2
+  store i32 0, i32* %dst_ip4, align 4
+  %src_port5 = getelementptr inbounds %struct.ipt_rule_t, %struct.ipt_rule_t* %.compoundliteral1, i32 0, i32 3
+  store i16 1024, i16* %src_port5, align 4
+  %dst_port6 = getelementptr inbounds %struct.ipt_rule_t, %struct.ipt_rule_t* %.compoundliteral1, i32 0, i32 4
+  store i16 80, i16* %dst_port6, align 2
+  %action7 = getelementptr inbounds %struct.ipt_rule_t, %struct.ipt_rule_t* %.compoundliteral1, i32 0, i32 5
+  store i32 1, i32* %action7, align 4
+  %2 = bitcast %struct.ipt_rule_t* %.compoundliteral1 to i8*
+  %3 = call i8* @memcpy(i8* bitcast (%struct.ipt_rule_t* getelementptr inbounds ([128 x %struct.ipt_rule_t], [128 x %struct.ipt_rule_t]* @rules, i64 0, i64 1) to i8*), i8* %2, i64 20)
+  %4 = bitcast %struct.ipt_rule_t* %.compoundliteral8 to i8*
+  %5 = call i8* @memset(i8* %4, i32 0, i64 20)
+  %proto9 = getelementptr inbounds %struct.ipt_rule_t, %struct.ipt_rule_t* %.compoundliteral8, i32 0, i32 0
+  store i32 -1, i32* %proto9, align 4
+  %6 = bitcast %struct.ipt_rule_t* %.compoundliteral8 to i8*
+  %7 = call i8* @memcpy(i8* bitcast (%struct.ipt_rule_t* getelementptr inbounds ([128 x %struct.ipt_rule_t], [128 x %struct.ipt_rule_t]* @rules, i64 0, i64 2) to i8*), i8* %6, i64 20)
+  store i32 3, i32* @rules_count, align 4
+  ret void
+}
+
+; Function Attrs: argmemonly nofree nounwind willreturn
+declare void @llvm.memcpy.p0i8.p0i8.i64(i8* noalias nocapture writeonly, i8* noalias nocapture readonly, i64, i1 immarg) #1
+
+; Function Attrs: argmemonly nofree nounwind willreturn writeonly
+declare void @llvm.memset.p0i8.i64(i8* nocapture writeonly, i8, i64, i1 immarg) #2
 
 ; Function Attrs: noinline nounwind optnone uwtable
 define dso_local i32 @check_packet(i32 %src_ip, i32 %dst_ip, i16 zeroext %src_port, i16 zeroext %dst_port, i32 %proto) #0 {
@@ -155,9 +207,6 @@ return:                                           ; preds = %for.end, %if.end41
   ret i32 %23
 }
 
-; Function Attrs: argmemonly nofree nounwind willreturn
-declare void @llvm.memcpy.p0i8.p0i8.i64(i8* noalias nocapture writeonly, i8* noalias nocapture readonly, i64, i1 immarg) #1
-
 ; Function Attrs: noinline nounwind optnone uwtable
 define dso_local i32 @main() #0 {
 entry:
@@ -167,9 +216,6 @@ entry:
   %src_port = alloca i16, align 2
   %dst_port = alloca i16, align 2
   %proto = alloca i32, align 4
-  %.compoundliteral = alloca %struct.ipt_rule_t, align 4
-  %.compoundliteral6 = alloca %struct.ipt_rule_t, align 4
-  %.compoundliteral13 = alloca %struct.ipt_rule_t, align 4
   %result = alloca i32, align 4
   store i32 0, i32* %retval, align 4
   %0 = bitcast i32* %src_ip to i8*
@@ -182,90 +228,79 @@ entry:
   call void @klee_make_symbolic(i8* %3, i64 2, i8* getelementptr inbounds ([9 x i8], [9 x i8]* @.str.3, i64 0, i64 0))
   %4 = bitcast i32* %proto to i8*
   call void @klee_make_symbolic(i8* %4, i64 4, i8* getelementptr inbounds ([6 x i8], [6 x i8]* @.str.4, i64 0, i64 0))
-  %proto1 = getelementptr inbounds %struct.ipt_rule_t, %struct.ipt_rule_t* %.compoundliteral, i32 0, i32 0
-  store i32 6, i32* %proto1, align 4
-  %src_ip2 = getelementptr inbounds %struct.ipt_rule_t, %struct.ipt_rule_t* %.compoundliteral, i32 0, i32 1
-  store i32 -1062731420, i32* %src_ip2, align 4
-  %dst_ip3 = getelementptr inbounds %struct.ipt_rule_t, %struct.ipt_rule_t* %.compoundliteral, i32 0, i32 2
-  store i32 0, i32* %dst_ip3, align 4
-  %src_port4 = getelementptr inbounds %struct.ipt_rule_t, %struct.ipt_rule_t* %.compoundliteral, i32 0, i32 3
-  store i16 1024, i16* %src_port4, align 4
-  %dst_port5 = getelementptr inbounds %struct.ipt_rule_t, %struct.ipt_rule_t* %.compoundliteral, i32 0, i32 4
-  store i16 80, i16* %dst_port5, align 2
-  %action = getelementptr inbounds %struct.ipt_rule_t, %struct.ipt_rule_t* %.compoundliteral, i32 0, i32 5
-  store i32 1, i32* %action, align 4
-  %5 = bitcast %struct.ipt_rule_t* %.compoundliteral to i8*
-  %6 = call i8* @memcpy(i8* bitcast ([128 x %struct.ipt_rule_t]* @rules to i8*), i8* %5, i64 20)
-  %proto7 = getelementptr inbounds %struct.ipt_rule_t, %struct.ipt_rule_t* %.compoundliteral6, i32 0, i32 0
-  store i32 17, i32* %proto7, align 4
-  %src_ip8 = getelementptr inbounds %struct.ipt_rule_t, %struct.ipt_rule_t* %.compoundliteral6, i32 0, i32 1
-  store i32 -1062731520, i32* %src_ip8, align 4
-  %dst_ip9 = getelementptr inbounds %struct.ipt_rule_t, %struct.ipt_rule_t* %.compoundliteral6, i32 0, i32 2
-  store i32 167772161, i32* %dst_ip9, align 4
-  %src_port10 = getelementptr inbounds %struct.ipt_rule_t, %struct.ipt_rule_t* %.compoundliteral6, i32 0, i32 3
-  store i16 53, i16* %src_port10, align 4
-  %dst_port11 = getelementptr inbounds %struct.ipt_rule_t, %struct.ipt_rule_t* %.compoundliteral6, i32 0, i32 4
-  store i16 53, i16* %dst_port11, align 2
-  %action12 = getelementptr inbounds %struct.ipt_rule_t, %struct.ipt_rule_t* %.compoundliteral6, i32 0, i32 5
-  store i32 1, i32* %action12, align 4
-  %7 = bitcast %struct.ipt_rule_t* %.compoundliteral6 to i8*
-  %8 = call i8* @memcpy(i8* bitcast (%struct.ipt_rule_t* getelementptr inbounds ([128 x %struct.ipt_rule_t], [128 x %struct.ipt_rule_t]* @rules, i64 0, i64 1) to i8*), i8* %7, i64 20)
-  %9 = bitcast %struct.ipt_rule_t* %.compoundliteral13 to i8*
-  %10 = call i8* @memset(i8* %9, i32 0, i64 20)
-  %proto14 = getelementptr inbounds %struct.ipt_rule_t, %struct.ipt_rule_t* %.compoundliteral13, i32 0, i32 0
-  store i32 -1, i32* %proto14, align 4
-  %11 = bitcast %struct.ipt_rule_t* %.compoundliteral13 to i8*
-  %12 = call i8* @memcpy(i8* bitcast (%struct.ipt_rule_t* getelementptr inbounds ([128 x %struct.ipt_rule_t], [128 x %struct.ipt_rule_t]* @rules, i64 0, i64 2) to i8*), i8* %11, i64 20)
-  store i32 3, i32* @rules_count, align 4
-  %13 = load i32, i32* %src_ip, align 4
-  %14 = load i32, i32* %dst_ip, align 4
-  %15 = load i16, i16* %src_port, align 2
-  %16 = load i16, i16* %dst_port, align 2
-  %17 = load i32, i32* %proto, align 4
-  %call = call i32 @check_packet(i32 %13, i32 %14, i16 zeroext %15, i16 zeroext %16, i32 %17)
-  store i32 %call, i32* %result, align 4
-  %18 = load i32, i32* %result, align 4
-  %cmp = icmp eq i32 %18, 1
-  br i1 %cmp, label %if.then, label %if.else
+  %5 = load i32, i32* %proto, align 4
+  %cmp = icmp eq i32 %5, 6
+  br i1 %cmp, label %lor.end, label %lor.lhs.false
 
-if.then:                                          ; preds = %entry
-  %19 = load i32, i32* %result, align 4
-  %cmp20 = icmp eq i32 %19, 1
-  br i1 %cmp20, label %cond.true, label %cond.false
+lor.lhs.false:                                    ; preds = %entry
+  %6 = load i32, i32* %proto, align 4
+  %cmp1 = icmp eq i32 %6, 17
+  br i1 %cmp1, label %lor.end, label %lor.rhs
+
+lor.rhs:                                          ; preds = %lor.lhs.false
+  %7 = load i32, i32* %proto, align 4
+  %cmp2 = icmp eq i32 %7, 1
+  br label %lor.end
+
+lor.end:                                          ; preds = %lor.rhs, %lor.lhs.false, %entry
+  %8 = phi i1 [ true, %lor.lhs.false ], [ true, %entry ], [ %cmp2, %lor.rhs ]
+  %lor.ext = zext i1 %8 to i32
+  %conv = sext i32 %lor.ext to i64
+  call void @klee_assume(i64 %conv)
+  call void @init_rules()
+  %9 = load i32, i32* %src_ip, align 4
+  %10 = load i32, i32* %dst_ip, align 4
+  %11 = load i16, i16* %src_port, align 2
+  %12 = load i16, i16* %dst_port, align 2
+  %13 = load i32, i32* %proto, align 4
+  %call = call i32 @check_packet(i32 %9, i32 %10, i16 zeroext %11, i16 zeroext %12, i32 %13)
+  store i32 %call, i32* %result, align 4
+  %14 = load i32, i32* %result, align 4
+  %cmp3 = icmp eq i32 %14, 1
+  br i1 %cmp3, label %if.then, label %if.else
+
+if.then:                                          ; preds = %lor.end
+  call void @klee_warning(i8* getelementptr inbounds ([7 x i8], [7 x i8]* @.str.5, i64 0, i64 0))
+  %15 = load i32, i32* %result, align 4
+  %cmp5 = icmp eq i32 %15, 1
+  br i1 %cmp5, label %cond.true, label %cond.false
 
 cond.true:                                        ; preds = %if.then
   br label %cond.end
 
 cond.false:                                       ; preds = %if.then
-  %call21 = call i32 (i8*, i8*, i32, i8*, ...) bitcast (i32 (...)* @__assert_fail to i32 (i8*, i8*, i32, i8*, ...)*)(i8* getelementptr inbounds ([24 x i8], [24 x i8]* @.str.5, i64 0, i64 0), i8* getelementptr inbounds ([13 x i8], [13 x i8]* @.str.6, i64 0, i64 0), i32 68, i8* getelementptr inbounds ([11 x i8], [11 x i8]* @__PRETTY_FUNCTION__.main, i64 0, i64 0))
+  %call7 = call i32 (i8*, i8*, i32, i8*, ...) bitcast (i32 (...)* @__assert_fail to i32 (i8*, i8*, i32, i8*, ...)*)(i8* getelementptr inbounds ([24 x i8], [24 x i8]* @.str.6, i64 0, i64 0), i8* getelementptr inbounds ([13 x i8], [13 x i8]* @.str.7, i64 0, i64 0), i32 75, i8* getelementptr inbounds ([11 x i8], [11 x i8]* @__PRETTY_FUNCTION__.main, i64 0, i64 0))
   br label %cond.end
 
 cond.end:                                         ; preds = %cond.false, %cond.true
   br label %if.end
 
-if.else:                                          ; preds = %entry
-  %20 = load i32, i32* %result, align 4
-  %cmp22 = icmp eq i32 %20, 0
-  br i1 %cmp22, label %cond.true23, label %cond.false24
+if.else:                                          ; preds = %lor.end
+  call void @klee_warning(i8* getelementptr inbounds ([5 x i8], [5 x i8]* @.str.8, i64 0, i64 0))
+  %16 = load i32, i32* %result, align 4
+  %cmp8 = icmp eq i32 %16, 0
+  br i1 %cmp8, label %cond.true10, label %cond.false11
 
-cond.true23:                                      ; preds = %if.else
-  br label %cond.end26
+cond.true10:                                      ; preds = %if.else
+  br label %cond.end13
 
-cond.false24:                                     ; preds = %if.else
-  %call25 = call i32 (i8*, i8*, i32, i8*, ...) bitcast (i32 (...)* @__assert_fail to i32 (i8*, i8*, i32, i8*, ...)*)(i8* getelementptr inbounds ([22 x i8], [22 x i8]* @.str.7, i64 0, i64 0), i8* getelementptr inbounds ([13 x i8], [13 x i8]* @.str.6, i64 0, i64 0), i32 70, i8* getelementptr inbounds ([11 x i8], [11 x i8]* @__PRETTY_FUNCTION__.main, i64 0, i64 0))
-  br label %cond.end26
+cond.false11:                                     ; preds = %if.else
+  %call12 = call i32 (i8*, i8*, i32, i8*, ...) bitcast (i32 (...)* @__assert_fail to i32 (i8*, i8*, i32, i8*, ...)*)(i8* getelementptr inbounds ([22 x i8], [22 x i8]* @.str.9, i64 0, i64 0), i8* getelementptr inbounds ([13 x i8], [13 x i8]* @.str.7, i64 0, i64 0), i32 78, i8* getelementptr inbounds ([11 x i8], [11 x i8]* @__PRETTY_FUNCTION__.main, i64 0, i64 0))
+  br label %cond.end13
 
-cond.end26:                                       ; preds = %cond.false24, %cond.true23
+cond.end13:                                       ; preds = %cond.false11, %cond.true10
   br label %if.end
 
-if.end:                                           ; preds = %cond.end26, %cond.end
-  ret i32 0
+if.end:                                           ; preds = %cond.end13, %cond.end
+  %17 = load i32, i32* %result, align 4
+  ret i32 %17
 }
 
-declare dso_local void @klee_make_symbolic(i8*, i64, i8*) #2
+declare dso_local void @klee_make_symbolic(i8*, i64, i8*) #3
 
-; Function Attrs: argmemonly nofree nounwind willreturn writeonly
-declare void @llvm.memset.p0i8.i64(i8* nocapture writeonly, i8, i64, i1 immarg) #3
+declare dso_local void @klee_assume(i64) #3
+
+declare dso_local void @klee_warning(i8*) #3
 
 ; Function Attrs: noreturn
 declare dso_local i32 @__assert_fail(...) #4
@@ -359,8 +394,8 @@ while.end:                                        ; preds = %while.cond
 
 attributes #0 = { noinline nounwind optnone uwtable "frame-pointer"="all" "min-legal-vector-width"="0" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
 attributes #1 = { argmemonly nofree nounwind willreturn }
-attributes #2 = { "frame-pointer"="all" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
-attributes #3 = { argmemonly nofree nounwind willreturn writeonly }
+attributes #2 = { argmemonly nofree nounwind willreturn writeonly }
+attributes #3 = { "frame-pointer"="all" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
 attributes #4 = { noreturn "frame-pointer"="all" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
 attributes #5 = { noinline nounwind uwtable "frame-pointer"="all" "min-legal-vector-width"="0" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
 attributes #6 = { nofree nosync nounwind readnone speculatable willreturn }
