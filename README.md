@@ -35,7 +35,7 @@ Verifies firewall configuration equivalence:
 
 ## 📦 Installation
 
-\```bash
+```
 # Clone the repository
 git clone https://github.com/yourusername/firewall-equivalence-checker.git
 
