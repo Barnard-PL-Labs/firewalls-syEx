@@ -3,11 +3,10 @@ from code_generator import generate_c_code
 from klee_runner import run_klee
 import pprint
 
-def main():
-    """Main function"""
+def runner(input_file, output_file):
     try:
         # Parse rules from iptables-save file
-        tables = parse_iptables_save_file("example.rules")
+        tables = parse_iptables_save_file(input_file)
         
         # Print each table's contents using the __str__ methods
         for table_name, table in tables.items():
@@ -15,7 +14,6 @@ def main():
             print(str(table))  # Explicitly convert to string
         
         # Generate C code
-        output_file = "test_rules.c"
         generate_c_code(tables, output_file)
         
         # Run KLEE and get SMT formulas
@@ -55,17 +53,21 @@ def main():
         combined_drop = combine_assertions(drop_assertions)
         combined_accept = combine_assertions(accept_assertions)
         
-        # Print combined formulas
-        print("\nCombined SMT-LIB Formulas:")
-        print("\nDROP Paths Combined:")
-        print(combined_drop)
-        print("\nACCEPT Paths Combined:")
-        print(combined_accept)
+        # Write formulas to SMT files
+        base_name = output_file.rsplit('.', 1)[0]  # Remove .c extension if present
+        
+        with open(f"{base_name}_drop.smt2", 'w') as f:
+            f.write(combined_drop)
+            
+        with open(f"{base_name}_accept.smt2", 'w') as f:
+            f.write(combined_accept)
+        
+        print(f"\nSMT formulas written to:")
+        print(f"- {base_name}_drop.smt2")
+        print(f"- {base_name}_accept.smt2")
             
     except Exception as e:
         print(f"Error: {str(e)}")
         import traceback
         traceback.print_exc()  # This will help debug the actual error
 
-if __name__ == "__main__":
-    main()

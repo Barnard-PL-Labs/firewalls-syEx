@@ -2,3 +2,6 @@
 **klee-out**
 **.bc
 **__pycache**
+
+net-network
+preprocessedFirewalls

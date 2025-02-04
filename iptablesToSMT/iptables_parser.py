@@ -11,6 +11,8 @@ class IPTablesRule:
         self.proto = "any"
         self.src_ip = "any"
         self.dst_ip = "any"
+        self.src_mask = None
+        self.dst_mask = None
         self.src_port = None
         self.dst_port = None
         self.in_interface = None
@@ -19,15 +21,31 @@ class IPTablesRule:
         self.action = "DROP"
         self.target_options = {}
         self.matches = {}
+        self.ipv6 = False
+        self.comment = None
 
     def __str__(self):
         parts = [f"-A {self.chain}"]
+        
+        # Protocol
         if self.proto != "any":
             parts.append(f"-p {self.proto}")
+        
+        # Source IP/Mask
         if self.src_ip != "any":
-            parts.append(f"-s {self.src_ip}")
+            src = self.src_ip
+            if self.src_mask:
+                src += f"/{self.src_mask}"
+            parts.append(f"-s {src}")
+        
+        # Destination IP/Mask
         if self.dst_ip != "any":
-            parts.append(f"-d {self.dst_ip}")
+            dst = self.dst_ip
+            if self.dst_mask:
+                dst += f"/{self.dst_mask}"
+            parts.append(f"-d {dst}")
+        
+        # Interfaces
         if self.in_interface:
             parts.append(f"-i {self.in_interface}")
         if self.out_interface:
@@ -38,14 +56,21 @@ class IPTablesRule:
             parts.append(f"-m {match_name}")
             for k, v in match_data.items():
                 if isinstance(v, list):
-                    parts.append(f"--{k} {','.join(v)}")
+                    parts.append(f"--{k} {','.join(str(x) for x in v)}")
+                elif isinstance(v, bool):
+                    if v:
+                        parts.append(f"--{k}")
                 else:
                     parts.append(f"--{k} {v}")
         
         # Add action and target options
         parts.append(f"-j {self.action}")
         for k, v in self.target_options.items():
-            parts.append(f"--{k} {v}")
+            if isinstance(v, bool):
+                if v:
+                    parts.append(f"--{k}")
+            else:
+                parts.append(f"--{k} {v}")
             
         return " ".join(parts)
 
@@ -73,51 +98,133 @@ class IPTablesTable:
         result.append("COMMIT")
         return "\n".join(result)
 
-def parse_target_options(parts: List[str], start_idx: int) -> tuple[Dict[str, str], int]:
-    """Parse target-specific options like --to-ports for DNAT/SNAT"""
+def parse_target_options(parts: List[str], start_idx: int) -> tuple[Dict[str, Union[str, bool]], int]:
+    """Parse target-specific options"""
     options = {}
     i = start_idx
     
     while i < len(parts):
-        if parts[i].startswith('--'):
-            if i + 1 < len(parts) and not parts[i + 1].startswith('-'):
-                options[parts[i][2:]] = parts[i + 1]
+        if not parts[i].startswith('--'):
+            break
+            
+        option_name = parts[i][2:]
+        
+        # Handle options that don't take values
+        if option_name in ["random", "persistent", "rsource", "rttl"]:
+            options[option_name] = True
+            i += 1
+            continue
+        
+        # Handle options that require values
+        if i + 1 < len(parts):
+            value = parts[i + 1]
+            if value.startswith('"'):
+                # Handle quoted values
+                while not value.endswith('"') and i + 2 < len(parts):
+                    i += 1
+                    value += " " + parts[i + 1]
+                value = value.strip('"')
+                options[option_name] = value
+                i += 2
+            elif not value.startswith('-'):
+                options[option_name] = value
                 i += 2
             else:
-                options[parts[i][2:]] = ''
+                options[option_name] = True
                 i += 1
         else:
-            break
+            options[option_name] = True
+            i += 1
     
     return options, i
 
-def parse_match_options(match_name: str, parts: List[str], start_idx: int) -> tuple[Dict[str, Union[str, List[str]]], int]:
+def parse_match_options(match_name: str, parts: List[str], start_idx: int) -> tuple[Dict[str, Union[str, List[str], bool]], int]:
     """Parse match-specific options like state matches"""
     options = {}
     i = start_idx
     
     while i < len(parts):
-        if parts[i].startswith('--'):
-            if match_name == "state" and parts[i] == "--state":
-                options["state"] = parts[i + 1].split(',')
-                i += 2
-            elif match_name in ["tcp", "udp"]:
-                if parts[i] in ["--sport", "--dport"]:
-                    options[parts[i][2:]] = parts[i + 1]
-                    i += 2
-                else:
-                    i += 1
-            else:
-                if i + 1 < len(parts) and not parts[i + 1].startswith('-'):
-                    options[parts[i][2:]] = parts[i + 1]
-                    i += 2
-                else:
-                    options[parts[i][2:]] = ''
-                    i += 1
-        else:
+        if not parts[i].startswith('--'):
             break
+            
+        option_name = parts[i][2:]  # Remove '--' prefix
+        
+        # Handle different match types
+        if match_name == "state" or match_name == "conntrack":
+            if option_name in ["state", "ctstate"]:
+                options[option_name] = parts[i + 1].split(',')
+                i += 2
+        
+        elif match_name in ["tcp", "udp"]:
+            if option_name in ["sport", "dport", "source-port", "destination-port"]:
+                # Handle port ranges
+                port_value = parts[i + 1]
+                if ":" in port_value:
+                    start_port, end_port = port_value.split(":")
+                    options[option_name] = [start_port, end_port]
+                else:
+                    options[option_name] = port_value
+                i += 2
+            else:
+                options[option_name] = True
+                i += 1
+        
+        elif match_name == "multiport":
+            if option_name in ["sports", "dports", "ports"]:
+                options[option_name] = parts[i + 1].split(',')
+                i += 2
+        
+        elif match_name == "limit":
+            if option_name in ["limit", "limit-burst"]:
+                options[option_name] = parts[i + 1]
+                i += 2
+        
+        elif match_name == "comment":
+            if option_name == "comment":
+                comment = parts[i + 1]
+                if comment.startswith('"'):
+                    while not comment.endswith('"') and i + 2 < len(parts):
+                        i += 1
+                        comment += " " + parts[i + 1]
+                    comment = comment.strip('"')
+                options[option_name] = comment
+                i += 2
+        
+        elif match_name == "icmp" or match_name == "icmpv6":
+            if option_name in ["icmp-type", "icmpv6-type"]:
+                options[option_name] = parts[i + 1]
+                i += 2
+        
+        elif match_name == "addrtype":
+            if option_name in ["src-type", "dst-type"]:
+                options[option_name] = parts[i + 1]
+                i += 2
+        
+        elif match_name == "recent":
+            if option_name in ["seconds", "hitcount"]:
+                options[option_name] = parts[i + 1]
+                i += 2
+            else:
+                options[option_name] = True
+                i += 1
+        
+        else:
+            # Generic handling for unknown match types
+            if i + 1 < len(parts) and not parts[i + 1].startswith('-'):
+                options[option_name] = parts[i + 1]
+                i += 2
+            else:
+                options[option_name] = True
+                i += 1
     
     return options, i
+
+def parse_ip_and_mask(ip_str: str) -> tuple[str, Optional[str]]:
+    """Parse IP address and mask from string"""
+    if '/' in ip_str:
+        ip, mask = ip_str.split('/')
+        return ip, mask
+    return ip_str, None
 
 def parse_iptables_save_file(filename: str) -> Dict[str, IPTablesTable]:
     """Parse iptables rules from an iptables-save format file."""
@@ -169,10 +276,10 @@ def parse_iptables_save_file(filename: str) -> Dict[str, IPTablesTable]:
                         rule.proto = parts[i + 1]
                         i += 2
                     elif part == '-s':
-                        rule.src_ip = parts[i + 1].split('/')[0]
+                        rule.src_ip, rule.src_mask = parse_ip_and_mask(parts[i + 1])
                         i += 2
                     elif part == '-d':
-                        rule.dst_ip = parts[i + 1].split('/')[0]
+                        rule.dst_ip, rule.dst_mask = parse_ip_and_mask(parts[i + 1])
                         i += 2
                     elif part == '-i':
                         rule.in_interface = parts[i + 1]

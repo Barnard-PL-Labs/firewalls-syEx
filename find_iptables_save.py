@@ -17,12 +17,28 @@ def find_iptables_save_files(root_dir):
 
 def copy_files_to_directory(file_list, destination_dir):
     os.makedirs(destination_dir, exist_ok=True)
+    copied_count = 0
+    
     for file_path in file_list:
-        shutil.copy2(file_path, destination_dir)
+        # Get just the filename without the path
+        base_filename = os.path.basename(file_path)
+        dest_path = os.path.join(destination_dir, base_filename)
+        
+        # Handle duplicate filenames by adding a suffix
+        counter = 1
+        while os.path.exists(dest_path):
+            name, ext = os.path.splitext(base_filename)
+            dest_path = os.path.join(destination_dir, f"{name}_{counter}{ext}")
+            counter += 1
+            
+        shutil.copy2(file_path, dest_path)
+        copied_count += 1
+    
+    return copied_count
 
 if __name__ == "__main__":
     acl_dir = input("Enter the source directory for ACL files: ")
     output_dir = input("Enter the destination directory: ")
     iptables_files = find_iptables_save_files(acl_dir)
-    copy_files_to_directory(iptables_files, output_dir)
-    print(f"Copied {len(iptables_files)} files to {output_dir}")
+    copied_count = copy_files_to_directory(iptables_files, output_dir)
+    print(f"Copied {copied_count} files to {output_dir}")
