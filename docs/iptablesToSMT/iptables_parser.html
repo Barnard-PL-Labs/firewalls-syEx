@@ -1,0 +1,536 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.5">
+<title>iptablesToSMT.iptables_parser API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>iptablesToSMT.iptables_parser</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="iptablesToSMT.iptables_parser.parse_ip_and_mask"><code class="name flex">
+<span>def <span class="ident">parse_ip_and_mask</span></span>(<span>ip_str: str) ‑> tuple[str, str | None]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_ip_and_mask(ip_str: str) -&gt; tuple[str, Optional[str]]:
+    &#34;&#34;&#34;Parse IP address and mask from string&#34;&#34;&#34;
+    if &#39;/&#39; in ip_str:
+        ip, mask = ip_str.split(&#39;/&#39;)
+        return ip, mask
+    return ip_str, None</code></pre>
+</details>
+<div class="desc"><p>Parse IP address and mask from string</p></div>
+</dd>
+<dt id="iptablesToSMT.iptables_parser.parse_iptables_save_file"><code class="name flex">
+<span>def <span class="ident">parse_iptables_save_file</span></span>(<span>filename: str) ‑> Dict[str, <a title="iptablesToSMT.iptables_parser.IPTablesTable" href="#iptablesToSMT.iptables_parser.IPTablesTable">IPTablesTable</a>]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_iptables_save_file(filename: str) -&gt; Dict[str, IPTablesTable]:
+    &#34;&#34;&#34;Parse iptables rules from an iptables-save format file.&#34;&#34;&#34;
+    try:
+        with open(filename, &#39;r&#39;) as f:
+            content = f.read()
+            
+        tables: Dict[str, IPTablesTable] = {}
+        current_table = None
+        
+        for line in content.splitlines():
+            line = line.strip()
+            if not line or line.startswith(&#39;#&#39;):
+                continue
+                
+            if line.startswith(&#39;*&#39;):
+                table_name = line[1:].strip()
+                current_table = IPTablesTable(table_name)
+                tables[table_name] = current_table
+                continue
+                
+            if line.startswith(&#39;:&#39;):
+                # Chain definition
+                parts = line[1:].split()
+                chain_name = parts[0]
+                policy = parts[1] if len(parts) &gt; 1 else &#34;ACCEPT&#34;
+                if current_table:
+                    current_table.chains[chain_name] = IPTablesChain(chain_name, policy)
+                continue
+                
+            if line.startswith(&#39;COMMIT&#39;):
+                current_table = None
+                continue
+                
+            if line.startswith(&#39;-A&#39;) and current_table:
+                rule = IPTablesRule()
+                rule.table = current_table.name
+                parts = line.split()
+                i = 1  # Skip -A
+                
+                # Get chain name
+                rule.chain = parts[i]
+                i += 1
+                
+                while i &lt; len(parts):
+                    part = parts[i]
+                    
+                    if part == &#39;-p&#39;:
+                        rule.proto = parts[i + 1]
+                        i += 2
+                    elif part == &#39;-s&#39;:
+                        rule.src_ip, rule.src_mask = parse_ip_and_mask(parts[i + 1])
+                        i += 2
+                    elif part == &#39;-d&#39;:
+                        rule.dst_ip, rule.dst_mask = parse_ip_and_mask(parts[i + 1])
+                        i += 2
+                    elif part == &#39;-i&#39;:
+                        rule.in_interface = parts[i + 1]
+                        i += 2
+                    elif part == &#39;-o&#39;:
+                        rule.out_interface = parts[i + 1]
+                        i += 2
+                    elif part == &#39;-m&#39;:
+                        match_name = parts[i + 1]
+                        i += 2
+                        match_options, i = parse_match_options(match_name, parts, i)
+                        rule.matches[match_name] = match_options
+                    elif part == &#39;-j&#39;:
+                        rule.action = parts[i + 1]
+                        i += 2
+                        if rule.action in [&#39;DNAT&#39;, &#39;SNAT&#39;, &#39;MASQUERADE&#39;]:
+                            options, i = parse_target_options(parts, i)
+                            rule.target_options = options
+                    else:
+                        i += 1
+                
+                if rule.chain in current_table.chains:
+                    current_table.chains[rule.chain].rules.append(rule)
+        
+        return tables
+        
+    except FileNotFoundError:
+        raise RuntimeError(f&#34;Could not find iptables rules file: {filename}&#34;)
+    except Exception as e:
+        raise RuntimeError(f&#34;Error parsing iptables rules file: {str(e)}&#34;)</code></pre>
+</details>
+<div class="desc"><p>Parse iptables rules from an iptables-save format file.</p></div>
+</dd>
+<dt id="iptablesToSMT.iptables_parser.parse_match_options"><code class="name flex">
+<span>def <span class="ident">parse_match_options</span></span>(<span>match_name: str, parts: List[str], start_idx: int) ‑> tuple[typing.Dict[str, str | List[str] | bool], int]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_match_options(match_name: str, parts: List[str], start_idx: int) -&gt; tuple[Dict[str, Union[str, List[str], bool]], int]:
+    &#34;&#34;&#34;Parse match-specific options like state matches&#34;&#34;&#34;
+    options = {}
+    i = start_idx
+    
+    while i &lt; len(parts):
+        if not parts[i].startswith(&#39;--&#39;):
+            break
+            
+        option_name = parts[i][2:]  # Remove &#39;--&#39; prefix
+        
+        # Handle different match types
+        if match_name == &#34;state&#34; or match_name == &#34;conntrack&#34;:
+            if option_name in [&#34;state&#34;, &#34;ctstate&#34;]:
+                options[option_name] = parts[i + 1].split(&#39;,&#39;)
+                i += 2
+        
+        elif match_name in [&#34;tcp&#34;, &#34;udp&#34;]:
+            if option_name in [&#34;sport&#34;, &#34;dport&#34;, &#34;source-port&#34;, &#34;destination-port&#34;]:
+                # Handle port ranges
+                port_value = parts[i + 1]
+                if &#34;:&#34; in port_value:
+                    start_port, end_port = port_value.split(&#34;:&#34;)
+                    options[option_name] = [start_port, end_port]
+                else:
+                    options[option_name] = port_value
+                i += 2
+            else:
+                options[option_name] = True
+                i += 1
+        
+        elif match_name == &#34;multiport&#34;:
+            if option_name in [&#34;sports&#34;, &#34;dports&#34;, &#34;ports&#34;]:
+                options[option_name] = parts[i + 1].split(&#39;,&#39;)
+                i += 2
+        
+        elif match_name == &#34;limit&#34;:
+            if option_name in [&#34;limit&#34;, &#34;limit-burst&#34;]:
+                options[option_name] = parts[i + 1]
+                i += 2
+        
+        elif match_name == &#34;comment&#34;:
+            if option_name == &#34;comment&#34;:
+                comment = parts[i + 1]
+                if comment.startswith(&#39;&#34;&#39;):
+                    while not comment.endswith(&#39;&#34;&#39;) and i + 2 &lt; len(parts):
+                        i += 1
+                        comment += &#34; &#34; + parts[i + 1]
+                    comment = comment.strip(&#39;&#34;&#39;)
+                options[option_name] = comment
+                i += 2
+        
+        elif match_name == &#34;icmp&#34; or match_name == &#34;icmpv6&#34;:
+            if option_name in [&#34;icmp-type&#34;, &#34;icmpv6-type&#34;]:
+                options[option_name] = parts[i + 1]
+                i += 2
+        
+        elif match_name == &#34;addrtype&#34;:
+            if option_name in [&#34;src-type&#34;, &#34;dst-type&#34;]:
+                options[option_name] = parts[i + 1]
+                i += 2
+        
+        elif match_name == &#34;recent&#34;:
+            if option_name in [&#34;seconds&#34;, &#34;hitcount&#34;]:
+                options[option_name] = parts[i + 1]
+                i += 2
+            else:
+                options[option_name] = True
+                i += 1
+        
+        else:
+            # Generic handling for unknown match types
+            if i + 1 &lt; len(parts) and not parts[i + 1].startswith(&#39;-&#39;):
+                options[option_name] = parts[i + 1]
+                i += 2
+            else:
+                options[option_name] = True
+                i += 1
+    
+    return options, i</code></pre>
+</details>
+<div class="desc"><p>Parse match-specific options like state matches</p></div>
+</dd>
+<dt id="iptablesToSMT.iptables_parser.parse_target_options"><code class="name flex">
+<span>def <span class="ident">parse_target_options</span></span>(<span>parts: List[str], start_idx: int) ‑> tuple[typing.Dict[str, str | bool], int]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_target_options(parts: List[str], start_idx: int) -&gt; tuple[Dict[str, Union[str, bool]], int]:
+    &#34;&#34;&#34;Parse target-specific options&#34;&#34;&#34;
+    options = {}
+    i = start_idx
+    
+    while i &lt; len(parts):
+        if not parts[i].startswith(&#39;--&#39;):
+            break
+            
+        option_name = parts[i][2:]
+        
+        # Handle options that don&#39;t take values
+        if option_name in [&#34;random&#34;, &#34;persistent&#34;, &#34;rsource&#34;, &#34;rttl&#34;]:
+            options[option_name] = True
+            i += 1
+            continue
+        
+        # Handle options that require values
+        if i + 1 &lt; len(parts):
+            value = parts[i + 1]
+            if value.startswith(&#39;&#34;&#39;):
+                # Handle quoted values
+                while not value.endswith(&#39;&#34;&#39;) and i + 2 &lt; len(parts):
+                    i += 1
+                    value += &#34; &#34; + parts[i + 1]
+                value = value.strip(&#39;&#34;&#39;)
+                options[option_name] = value
+                i += 2
+            elif not value.startswith(&#39;-&#39;):
+                options[option_name] = value
+                i += 2
+            else:
+                options[option_name] = True
+                i += 1
+        else:
+            options[option_name] = True
+            i += 1
+    
+    return options, i</code></pre>
+</details>
+<div class="desc"><p>Parse target-specific options</p></div>
+</dd>
+<dt id="iptablesToSMT.iptables_parser.read_live_iptables"><code class="name flex">
+<span>def <span class="ident">read_live_iptables</span></span>(<span>) ‑> Dict[str, <a title="iptablesToSMT.iptables_parser.IPTablesTable" href="#iptablesToSMT.iptables_parser.IPTablesTable">IPTablesTable</a>]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def read_live_iptables() -&gt; Dict[str, IPTablesTable]:
+    &#34;&#34;&#34;Read and parse live iptables rules using python-iptables.&#34;&#34;&#34;
+    tables = {}
+    
+    for table_name in [&#39;filter&#39;, &#39;nat&#39;, &#39;mangle&#39;, &#39;raw&#39;]:
+        try:
+            table = iptc.Table(table_name)
+            table.refresh()
+            
+            ipt_table = IPTablesTable(table_name)
+            tables[table_name] = ipt_table
+            
+            for chain in table.chains:
+                ipt_chain = IPTablesChain(chain.name, chain.policy if hasattr(chain, &#39;policy&#39;) else &#39;ACCEPT&#39;)
+                ipt_table.chains[chain.name] = ipt_chain
+                
+                for rule in chain.rules:
+                    ipt_rule = IPTablesRule()
+                    ipt_rule.table = table_name
+                    ipt_rule.chain = chain.name
+                    ipt_rule.proto = rule.protocol.lower() if rule.protocol else &#34;any&#34;
+                    ipt_rule.src_ip = rule.src.split(&#39;/&#39;)[0] if rule.src else &#34;any&#34;
+                    ipt_rule.dst_ip = rule.dst.split(&#39;/&#39;)[0] if rule.dst else &#34;any&#34;
+                    ipt_rule.in_interface = rule.in_interface if rule.in_interface else None
+                    ipt_rule.out_interface = rule.out_interface if rule.out_interface else None
+                    ipt_rule.action = rule.target.name if rule.target else &#34;DROP&#34;
+                    
+                    # Handle matches
+                    for match in rule.matches:
+                        match_data = {}
+                        if match.name in [&#34;tcp&#34;, &#34;udp&#34;]:
+                            if hasattr(match, &#34;sport&#34;):
+                                match_data[&#34;sport&#34;] = match.sport
+                            if hasattr(match, &#34;dport&#34;):
+                                match_data[&#34;dport&#34;] = match.dport
+                        elif match.name == &#34;state&#34;:
+                            if hasattr(match, &#34;state&#34;):
+                                match_data[&#34;state&#34;] = match.state.split(&#39;,&#39;)
+                        
+                        ipt_rule.matches[match.name] = match_data
+                    
+                    # Handle target options
+                    if rule.target and hasattr(rule.target, &#34;to_ports&#34;):
+                        ipt_rule.target_options[&#34;to-ports&#34;] = rule.target.to_ports
+                    
+                    ipt_chain.rules.append(ipt_rule)
+                    
+        except Exception as e:
+            print(f&#34;Warning: Could not read {table_name} table: {str(e)}&#34;)
+            continue
+    
+    return tables</code></pre>
+</details>
+<div class="desc"><p>Read and parse live iptables rules using python-iptables.</p></div>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="iptablesToSMT.iptables_parser.IPTablesChain"><code class="flex name class">
+<span>class <span class="ident">IPTablesChain</span></span>
+<span>(</span><span>name: str, policy: str = 'ACCEPT')</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class IPTablesChain:
+    def __init__(self, name: str, policy: str = &#34;ACCEPT&#34;):
+        self.name = name
+        self.policy = policy
+        self.rules: List[IPTablesRule] = []
+
+    def __str__(self):
+        result = [f&#34;:{self.name} {self.policy}&#34;]
+        for rule in self.rules:
+            result.append(str(rule))
+        return &#34;\n&#34;.join(result)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="iptablesToSMT.iptables_parser.IPTablesRule"><code class="flex name class">
+<span>class <span class="ident">IPTablesRule</span></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class IPTablesRule:
+    def __init__(self):
+        self.table = &#34;filter&#34;
+        self.chain = &#34;&#34;
+        self.proto = &#34;any&#34;
+        self.src_ip = &#34;any&#34;
+        self.dst_ip = &#34;any&#34;
+        self.src_mask = None
+        self.dst_mask = None
+        self.src_port = None
+        self.dst_port = None
+        self.in_interface = None
+        self.out_interface = None
+        self.state = []
+        self.action = &#34;DROP&#34;
+        self.target_options = {}
+        self.matches = {}
+        self.ipv6 = False
+        self.comment = None
+
+    def __str__(self):
+        parts = [f&#34;-A {self.chain}&#34;]
+        
+        # Protocol
+        if self.proto != &#34;any&#34;:
+            parts.append(f&#34;-p {self.proto}&#34;)
+        
+        # Source IP/Mask
+        if self.src_ip != &#34;any&#34;:
+            src = self.src_ip
+            if self.src_mask:
+                src += f&#34;/{self.src_mask}&#34;
+            parts.append(f&#34;-s {src}&#34;)
+        
+        # Destination IP/Mask
+        if self.dst_ip != &#34;any&#34;:
+            dst = self.dst_ip
+            if self.dst_mask:
+                dst += f&#34;/{self.dst_mask}&#34;
+            parts.append(f&#34;-d {dst}&#34;)
+        
+        # Interfaces
+        if self.in_interface:
+            parts.append(f&#34;-i {self.in_interface}&#34;)
+        if self.out_interface:
+            parts.append(f&#34;-o {self.out_interface}&#34;)
+        
+        # Add matches
+        for match_name, match_data in self.matches.items():
+            parts.append(f&#34;-m {match_name}&#34;)
+            for k, v in match_data.items():
+                if isinstance(v, list):
+                    parts.append(f&#34;--{k} {&#39;,&#39;.join(str(x) for x in v)}&#34;)
+                elif isinstance(v, bool):
+                    if v:
+                        parts.append(f&#34;--{k}&#34;)
+                else:
+                    parts.append(f&#34;--{k} {v}&#34;)
+        
+        # Add action and target options
+        parts.append(f&#34;-j {self.action}&#34;)
+        for k, v in self.target_options.items():
+            if isinstance(v, bool):
+                if v:
+                    parts.append(f&#34;--{k}&#34;)
+            else:
+                parts.append(f&#34;--{k} {v}&#34;)
+            
+        return &#34; &#34;.join(parts)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="iptablesToSMT.iptables_parser.IPTablesTable"><code class="flex name class">
+<span>class <span class="ident">IPTablesTable</span></span>
+<span>(</span><span>name: str)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class IPTablesTable:
+    def __init__(self, name: str):
+        self.name = name
+        self.chains: Dict[str, IPTablesChain] = {}
+
+    def __str__(self):
+        result = [f&#34;*{self.name}&#34;]
+        for chain in self.chains.values():
+            result.append(str(chain))
+        result.append(&#34;COMMIT&#34;)
+        return &#34;\n&#34;.join(result)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="iptablesToSMT" href="index.html">iptablesToSMT</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="iptablesToSMT.iptables_parser.parse_ip_and_mask" href="#iptablesToSMT.iptables_parser.parse_ip_and_mask">parse_ip_and_mask</a></code></li>
+<li><code><a title="iptablesToSMT.iptables_parser.parse_iptables_save_file" href="#iptablesToSMT.iptables_parser.parse_iptables_save_file">parse_iptables_save_file</a></code></li>
+<li><code><a title="iptablesToSMT.iptables_parser.parse_match_options" href="#iptablesToSMT.iptables_parser.parse_match_options">parse_match_options</a></code></li>
+<li><code><a title="iptablesToSMT.iptables_parser.parse_target_options" href="#iptablesToSMT.iptables_parser.parse_target_options">parse_target_options</a></code></li>
+<li><code><a title="iptablesToSMT.iptables_parser.read_live_iptables" href="#iptablesToSMT.iptables_parser.read_live_iptables">read_live_iptables</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="iptablesToSMT.iptables_parser.IPTablesChain" href="#iptablesToSMT.iptables_parser.IPTablesChain">IPTablesChain</a></code></h4>
+</li>
+<li>
+<h4><code><a title="iptablesToSMT.iptables_parser.IPTablesRule" href="#iptablesToSMT.iptables_parser.IPTablesRule">IPTablesRule</a></code></h4>
+</li>
+<li>
+<h4><code><a title="iptablesToSMT.iptables_parser.IPTablesTable" href="#iptablesToSMT.iptables_parser.IPTablesTable">IPTablesTable</a></code></h4>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.5</a>.</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,5 @@
+google-generativeai
+protobuf
+z3-solver
+pdoc3
+pipreqs

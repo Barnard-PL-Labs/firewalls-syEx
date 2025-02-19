@@ -61,6 +61,10 @@ Detailed documentation coming soon\!
 - Z3 SMT Solver
 - The iptables and eBPF communities
 
+## 📂 Data Source
+
+The example iptables rules in the `exampleIptables` directory are sourced from the [diekmann/net-network.git](https://github.com/diekmann/net-network) repository.
+
 ---
 
 <p align="center">Made with ❤️ for the network security community</p>

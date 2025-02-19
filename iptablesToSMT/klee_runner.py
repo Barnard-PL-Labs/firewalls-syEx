@@ -101,7 +101,7 @@ def run_klee(c_filename):
         if os.path.exists("klee-out-0"):
             shutil.rmtree("klee-out-0")
             
-        subprocess.check_call(["clang", "-DUSE_KLEE", "-I/usr/local/include/klee", "-emit-llvm", "-c", c_filename, "-o", bc_filename])
+        subprocess.check_call(["clang++", "-DUSE_KLEE", "-I/usr/local/include/klee", "-L/usr/local/lib", "-lkleeCore", "-lSMTLIB2Parser", "-emit-llvm", "-c", c_filename, "-o", bc_filename])
         result = subprocess.check_output(["klee", "--write-smt2s", bc_filename], 
                                       stderr=subprocess.STDOUT).decode("utf-8")
        
