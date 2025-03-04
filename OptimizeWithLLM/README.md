@@ -1,14 +1,14 @@
-# OptimizeWithLLM: Gemini-Powered IPTables Optimizer
+# OptimizeWithLLM: Gemini-Powered eBPF Optimizer
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-\>  Optimize IPTables rules using Gemini API for enhanced performance.
+\>  Optimize eBPF rules using Gemini API for enhanced performance.
 
 ## ✨ Features
 
-- Gemini API Integration for iptables rule optimization.
-- Performance and redundancy optimization of iptables rulesets.
-- Output of optimized rules in `iptables-save` format.
+- Gemini API Integration for eBPF rule optimization.
+- Performance and redundancy optimization of eBPF rulesets.
+- Output of optimized rules in eBPF format.
 
 ## 🛠️ Components
 
@@ -29,11 +29,11 @@ wsl python3 -m pip install -r requirements.txt
 
 1. Install requirements.
 2. Get Gemini API Key.
-3. Prepare iptables rules file.
+3. Prepare eBPF rules file.
 4. Run:
 
    ```bash
-   python3 OptimizeWithLLM/main.py YOUR_API_KEY iptables_rules_file [output_file]
+   python3 OptimizeWithLLM/main.py YOUR_API_KEY ebpf_rules_file [output_file]
    ```
 
 ## 📝 License

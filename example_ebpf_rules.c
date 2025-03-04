@@ -1,0 +1,45 @@
+// xdp_firewall.c
+
+#include <linux/bpf.h>
+#include <linux/if_ether.h>
+#include <linux/ip.h>
+#include <linux/in.h>
+#include <bpf/bpf_helpers.h>
+#include <bpf/bpf_endian.h>
+
+struct {
+    __uint(type, BPF_MAP_TYPE_HASH);
+    __uint(max_entries, 1024);
+    __type(key, __u32);
+    __type(value, __u8);
+} blocked_ips SEC(".maps");
+
+SEC("xdp")
+int xdp_firewall_prog(struct xdp_md *ctx) {
+    void *data_end = (void *)(long)ctx->data_end;
+    void *data = (void *)(long)ctx->data;
+    struct ethhdr *eth = data;
+    struct iphdr *ip;
+    __u32 ip_src;
+
+    if (data + sizeof(struct ethhdr) > data_end)
+        return XDP_PASS; 
+
+    if (bpf_ntohs(eth->h_proto) != ETH_P_IP)
+        return XDP_PASS; 
+
+    ip = data + sizeof(struct ethhdr);
+    if ((void *)(ip + 1) > data_end)
+        return XDP_PASS;
+
+    ip_src = ip->saddr; 
+
+    if (bpf_map_lookup_elem(&blocked_ips, &ip_src)) {
+        bpf_printk("Blocked IP: %pI4\n", &ip_src); 
+        return XDP_DROP; 
+    }
+
+    return XDP_PASS;
+}
+
+char _license[] SEC("license") = "GPL";

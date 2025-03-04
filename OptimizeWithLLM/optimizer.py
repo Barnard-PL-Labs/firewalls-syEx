@@ -7,32 +7,32 @@ class GeminiOptimizer:
         genai.configure(api_key=GeminiConfig.API_KEY)
         self.model = genai.GenerativeModel(GeminiConfig.MODEL_NAME)
 
-    def optimize_iptables_rules(self, iptables_rules):
-        prompt = f"""You are tasked with optimizing a set of iptables firewall rules to enhance performance while maintaining the same functional behavior. The goal is to improve the processing efficiency by considering aspects like rule order, redundant rules, and rule grouping.
+    def optimize_ebpf_rules(self, ebpf_rules):
+        prompt = f"""You are tasked with optimizing a set of eBPF firewall rules to enhance performance and efficiency, while ensuring they maintain the same functional behavior.
 
 ### Instructions:
-1. **Input:** A list of iptables firewall rules in the following format:
-   ```iptables
-   {iptables_rules}
+1. **Input:** A list of eBPF firewall rules.
+   ```ebpf
+   {ebpf_rules}
    ```
-   
-2. **Objective:** 
-   - Reorder the rules if necessary to minimize the number of checks.
-   - Remove any redundant rules without changing the firewall behavior.
-   - Ensure that the optimized set of rules is logically equivalent to the original set.
-   
+
+2. **Objective:**
+   - Improve the rules for better performance in an eBPF environment.
+   - Reduce redundancy and complexity where possible.
+   - Ensure the optimized rules are functionally equivalent to the original set.
+
 3. **Considerations:**
-   - The original rules must be preserved in terms of their logical functionality.
-   - The optimization should result in fewer rule checks, better resource utilization, and faster packet processing.
-   - Maintain any conditional logic and prioritization inherent in the original rules.
+   - Maintain the original intent and security posture of the rules.
+   - Optimize for eBPF execution environment, considering rule order and efficiency in eBPF processing.
+   - Ensure logical equivalence to the original rules.
 
-4. **Output:** Provide only the optimized iptables rules in the same format, without any explanation.
+4. **Output:** Provide only the optimized eBPF rules in the same format, without explanations.
 
-Optimized iptables rules:
-```iptables
+Optimized eBPF rules:
+```ebpf
 """
 
-        prompt_with_rules = prompt.format(iptables_rules=iptables_rules)
+        prompt_with_rules = f"""{prompt}\n{ebpf_rules}"""
 
         response_stream = self.model.generate_content(prompt_with_rules, stream=True)
         optimized_rules_text = ""
