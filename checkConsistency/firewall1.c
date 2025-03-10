@@ -20,7 +20,7 @@ int xdp_firewall(struct xdp_md *ctx) {
         if ((void *)(iph + 1) > data_end)
             return XDP_PASS;
 
-        // Example filter: drop packets from source IP 192.168.1.101 (0xC0A80165)
+        // Example filter: drop packets from source IP 192.168.1.100
         // __constant_htonl converts the IP constant to network byte order.
         if (iph->saddr == __constant_htonl(0xC0A80165)) {
             return XDP_DROP;
