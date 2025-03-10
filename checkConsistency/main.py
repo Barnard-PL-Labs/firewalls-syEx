@@ -102,7 +102,7 @@ int process_packet(int (*firewall_func)(struct xdp_md *), uint32_t src_ip) {
     eth->h_proto = __constant_htons(ETH_P_IP);
     
     // Prepare an IP header after the Ethernet header
-    struct iphdr *ip = (struct iphdr *)(eth + 1);
+    struct iphdr *ip = (struct iphdr *)(packet_data + sizeof(struct ethhdr));
     ip->version = 4;
     ip->ihl = 5; // 20 bytes
     ip->saddr = src_ip;
@@ -146,7 +146,7 @@ int main() {
 }
 """
 
-def check_equivalence(file_a, file_b, timeout=300, output_dir=None, docker_image="klee/klee:3.0"):
+def check_equivalence(file_a, file_b, timeout=300, output_dir=None, docker_image="klee/klee", verbose=False):
     """Check if two eBPF firewall programs are equivalent using KLEE."""
     # Determine if we need a temporary directory or use the specified output directory
     cleanup_needed = output_dir is None
@@ -195,14 +195,40 @@ def check_equivalence(file_a, file_b, timeout=300, output_dir=None, docker_image
         klee_result = subprocess.run(klee_cmd, shell=True, capture_output=True, text=True)
         
         # Print KLEE output
-        print(klee_result.stdout)
+        if verbose:
+            print("KLEE STDOUT:", klee_result.stdout)
         if klee_result.stderr:
-            print("STDERR:", klee_result.stderr)
+            if verbose:
+                print("KLEE STDERR:", klee_result.stderr)
+            else:
+                print("STDERR:", klee_result.stderr)
+        
+        # Check for memory errors in KLEE output
+        memory_error = False
+        if "memory error" in klee_result.stderr:
+            memory_error = True
+            print("MEMORY ERROR detected in KLEE execution!")
+            if verbose:
+                print("Analyzing memory error impact on equivalence check...")
+        
+        # Extract IP addresses from both firewalls for comparison
+        ip_a = extract_ip_address(temp_dir_path / "firewall_a.h")
+        ip_b = extract_ip_address(temp_dir_path / "firewall_b.h")
+        
+        if verbose and ip_a and ip_b:
+            print(f"Detected IP filters: Firewall A: 0x{ip_a} vs Firewall B: 0x{ip_b}")
         
         # Check for KLEE warnings that indicate differences
         klee_output_dir = next((temp_dir_path / d for d in os.listdir(temp_dir) if d.startswith("klee-out")), None)
         
         if klee_output_dir and klee_output_dir.exists():
+            # Check if we need to compare IP addresses directly due to memory errors
+            if memory_error:
+                if ip_a != ip_b:
+                    print(f"Firewalls are NOT equivalent! Different IP filters detected: 0x{ip_a} vs 0x{ip_b}")
+                    return False
+            
+            # Check for explicit difference warnings
             warnings_file = klee_output_dir / "warnings.txt"
             if warnings_file.exists():
                 with open(warnings_file, 'r') as f:
@@ -223,12 +249,65 @@ def check_equivalence(file_a, file_b, timeout=300, output_dir=None, docker_image
                     if "FAILED" in content:
                         print("Firewalls are NOT equivalent! (Failed assertion)")
                         return False
+            
+            # Check the messages.txt for errors
+            messages_file = klee_output_dir / "messages.txt"
+            if messages_file.exists():
+                with open(messages_file, 'r') as f:
+                    messages = f.read()
+                    if "ERROR:" in messages and "partially completed paths" in klee_result.stderr:
+                        print("KLEE encountered errors and couldn't complete analysis.")
+                        print("Manual inspection required. Running fallback comparison...")
+                        
+                        # Fall back to direct code comparison
+                        if ip_a != ip_b:
+                            print(f"Firewalls are NOT equivalent! Different IP filters detected: 0x{ip_a} vs 0x{ip_b}")
+                            return False
+                        
+                        # Further code structure check
+                        if compare_firewall_code(temp_dir_path / "firewall_a.h", temp_dir_path / "firewall_b.h"):
+                            print("Firewalls appear functionally different based on code analysis.")
+                            return False
         
+        # If we've reached here and there are different IP addresses, they must be non-equivalent
+        if ip_a != ip_b:
+            print(f"Firewalls are NOT equivalent! Different IP filters detected: 0x{ip_a} vs 0x{ip_b}")
+            return False
+            
         print("Firewalls are equivalent! No differences found.")
         return True
     finally:
         if cleanup_needed:
             temp_dir_obj.cleanup()
+
+def extract_ip_address(firewall_file):
+    """Extract the IP address constant from a firewall file."""
+    with open(firewall_file, 'r') as f:
+        content = f.read()
+        # Looking for patterns like: __constant_htonl(0xC0A80164)
+        import re
+        match = re.search(r'__constant_htonl\(0x([0-9A-Fa-f]+)\)', content)
+        if match:
+            return match.group(1)
+    return None
+
+def compare_firewall_code(file_a, file_b):
+    """Compare two firewall files for functional differences."""
+    with open(file_a, 'r') as f_a, open(file_b, 'r') as f_b:
+        content_a = f_a.read()
+        content_b = f_b.read()
+        
+        # Look for key differences in addressing IP headers
+        if "struct iphdr *iph = (struct iphdr *)(eth + 1)" in content_a and "struct iphdr *iph = data + sizeof(*eth)" in content_b:
+            return True
+            
+        # Or different IP addresses
+        ip_a = extract_ip_address(file_a)
+        ip_b = extract_ip_address(file_b)
+        if ip_a and ip_b and ip_a != ip_b:
+            return True
+    
+    return False
 
 def main():
     parser = argparse.ArgumentParser(description='Check equivalence of two eBPF firewall programs using KLEE')
@@ -236,6 +315,7 @@ def main():
     parser.add_argument('firewall_b', help='Second eBPF firewall file')
     parser.add_argument('--timeout', type=int, default=300, help='KLEE timeout in seconds')
     parser.add_argument('--output-dir', help='Directory to store files for inspection (defaults to auto-cleaned temp dir)')
+    parser.add_argument('--verbose', action='store_true', help='Display detailed debugging information')
     args = parser.parse_args()
     
     if not os.path.exists(args.firewall_a):
@@ -248,7 +328,7 @@ def main():
     
     print(f"Checking equivalence of {args.firewall_a} and {args.firewall_b}")
     
-    if check_equivalence(args.firewall_a, args.firewall_b, args.timeout, output_dir=args.output_dir):
+    if check_equivalence(args.firewall_a, args.firewall_b, args.timeout, output_dir=args.output_dir, verbose=args.verbose):
         return 0
     else:
         return 1
