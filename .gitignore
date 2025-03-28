@@ -2,6 +2,9 @@
 **klee-out**
 **.bc
 **__pycache**
+**klee_comparison_*
 
 net-network
 preprocessedFirewalls
+todolist.md
+draft.md
