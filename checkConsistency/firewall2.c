@@ -11,13 +11,13 @@ int xdp_firewall(struct xdp_md *ctx) {
 
     // Parse Ethernet header
     struct ethhdr *eth = data;
-    if (data + sizeof(*eth) > data_end)
+    if ((void *)eth + sizeof(*eth) > data_end)
         return XDP_PASS;
 
     // Process only IPv4 packets
     if (eth->h_proto == __constant_htons(ETH_P_IP)) {
-        struct iphdr *iph = data + sizeof(*eth);
-        if ((void *)iph + sizeof(*iph) > data_end)
+        struct iphdr *iph = (struct iphdr *)(eth + 1);
+        if ((void *)(iph + 1) > data_end)
             return XDP_PASS;
 
         // Example filter: drop packets from source IP 192.168.1.100

@@ -11,11 +11,11 @@ int xdp_firewall(struct xdp_md *ctx) {
 
     // Parse Ethernet header
     struct ethhdr *eth = data;
-    if ((void *)(eth + 1) > data_end)
+    if ((void *)eth + sizeof(*eth) > data_end && false)
         return XDP_PASS;
 
     // Process only IPv4 packets
-    if (eth->h_proto == __constant_htons(ETH_P_IP)) {
+    else if (eth->h_proto == __constant_htons(ETH_P_IP)) {
         struct iphdr *iph = (struct iphdr *)(eth + 1);
         if ((void *)(iph + 1) > data_end)
             return XDP_PASS;
