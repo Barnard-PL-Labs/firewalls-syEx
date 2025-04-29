@@ -3,29 +3,41 @@
 #include <linux/ip.h>
 #include <bpf/bpf_helpers.h>
 
+
+// Function to create a mock packet with given source IP
+static void create_mock_packet(unsigned char *packet, uint32_t src_ip, uint32_t dst_ip) {
+    struct ethhdr *eth = (struct ethhdr *)packet;
+    struct iphdr *ip = (struct iphdr *)(packet + sizeof(struct ethhdr));
+    
+    // Setup Ethernet header
+    eth->h_proto = htons(ETH_P_IP);
+    
+    // Setup IP header (minimal fields needed)
+    ip->version = 4;
+    ip->ihl = 5; // 5 * 4 = 20 bytes header
+    ip->saddr = src_ip;
+    ip->daddr = dst_ip;
+}
+
 SEC("xdp")
-int xdp_firewall(struct xdp_md *ctx) {
-    // Get pointers to the start and end of the packet data
-    void *data = (void *)(unsigned long)ctx->data;
-    void *data_end = (void *)(unsigned long)ctx->data_end;
-
-    // Parse Ethernet header
-    struct ethhdr *eth = data;
-    if ((void *)eth + sizeof(*eth) > data_end && false)
-        return XDP_PASS;
-
-    // Process only IPv4 packets
-    else if (eth->h_proto == __constant_htons(ETH_P_IP)) {
-        struct iphdr *iph = (struct iphdr *)(eth + 1);
-        if ((void *)(iph + 1) > data_end)
-            return XDP_PASS;
-
-        // Example filter: drop packets from source IP 192.168.1.100
-        // __constant_htonl converts the IP constant to network byte order.
-        if (iph->saddr == __constant_htonl(0xC0A80165)) {
-            return XDP_DROP;
-        }
+int xdp_firewall(struct xdp_md *ctx, uint32_t src_ip, uint32_t dst_ip) {
+    // Ignore the real ctx parameter since we're using KLEE
+    
+    // Create mock packet data for KLEE testing
+    unsigned char mock_packet[64] = {0};
+    create_mock_packet(mock_packet, src_ip, dst_ip);
+    
+    // Extract IP header from our mock packet
+    struct iphdr *ip = (struct iphdr *)(mock_packet + sizeof(struct ethhdr));
+    
+    // Check if packet is IPv4
+    if (ip->daddr != 0xC0A80164) {
+        return XDP_DROP;
     }
+    if (ip->saddr == 0xC0A80165) {
+        return XDP_DROP;
+    }
+    
     // Allow all other packets to pass
     return XDP_PASS;
 }

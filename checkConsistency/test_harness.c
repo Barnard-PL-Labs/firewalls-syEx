@@ -41,46 +41,26 @@ uint8_t packet_data[PACKET_SIZE];
 uint8_t *packet_base = packet_data;
 
 // Simplified model of packet processing for XDP programs
-int process_packet(int (*firewall_func)(struct xdp_md *), uint32_t src_ip) {
-    memset(packet_data, 0, PACKET_SIZE);
-    
-    // Prepare an Ethernet header - ensure we have enough space
-    if (sizeof(struct ethhdr) > PACKET_SIZE) {
-        return XDP_ABORTED; // Safety check
-    }
-    
-    struct ethhdr *eth = (struct ethhdr *)packet_data;
-    eth->h_proto = __constant_htons(ETH_P_IP);
-    
-    // Prepare an IP header after the Ethernet header - with proper boundary checks
-    if (sizeof(struct ethhdr) + sizeof(struct iphdr) > PACKET_SIZE) {
-        return XDP_ABORTED; // Safety check
-    }
-    
-    struct iphdr *ip = (struct iphdr *)(packet_data + sizeof(struct ethhdr));
-    ip->version = 4;
-    ip->ihl = 5; // 20 bytes
-    ip->saddr = src_ip;
-    
-    // Set up the xdp_md context with precise boundaries
+int process_packet(int (*firewall_func)(struct xdp_md *, uint32_t, uint32_t), uint32_t src_ip, uint32_t dst_ip) {
+    // We'll pass the src_ip directly to the firewall function instead of creating a packet
     struct xdp_md ctx;
     memset(&ctx, 0, sizeof(ctx));
-    ctx.data = 0;
-    ctx.data_end = sizeof(struct ethhdr) + sizeof(struct iphdr);
     
-    // Call the firewall function
-    return firewall_func(&ctx);
+    return firewall_func(&ctx, src_ip, dst_ip);
 }
+
+
 
 int main() {
     uint32_t src_ip;
-    
+    uint32_t dst_ip;
     // Make the source IP symbolic
     klee_make_symbolic(&src_ip, sizeof(src_ip), "src_ip");
+    klee_make_symbolic(&dst_ip, sizeof(dst_ip), "dst_ip");
     
     // Process the packet through both firewalls
-    int result_a = process_packet(xdp_firewall_a, src_ip);
-    int result_b = process_packet(xdp_firewall_b, src_ip);
+    int result_a = process_packet(xdp_firewall_a, src_ip, dst_ip);
+    int result_b = process_packet(xdp_firewall_b, src_ip, dst_ip);
     
     // Check for equivalence
     if (result_a != result_b) {
